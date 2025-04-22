@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <!-- Agregar Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      font-size: 16px;
+    }
+
+    /* Encabezado */
+    .header {
+      background-color: #006600;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .header img {
+      height: 40px;
+    }
+
+    /* Botón de filtros */
+    .filter-toggle {
+      background-color: #006600;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      margin: 20px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-toggle i {
+      font-size: 20px;
+    }
+
+    /* Panel de filtrado */
+    .filter-panel {
+      display: none;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px;
+      max-width: 400px;
+    }
+
+    .filter-panel.show {
+      display: block;
+    }
+
+    .filter-content h3 {
+      margin-bottom: 20px;
+      color: #006600;
+      font-size: 20px;
+    }
+
+    .filter-group {
+      margin-bottom: 15px;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .filter-actions button {
+      background-color: #006600;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      flex: 1;
+    }
+
+    .filter-actions button:hover {
+      background-color: #004d00;
+    }
+
+    /* Contenedor de KPIs */
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 30%;
+      margin: 10px;
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h3 {
+      color: #006600;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .card p {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* Estilos responsivos */
+    @media (max-width: 768px) {
+      .header {
+        font-size: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .filter-toggle {
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      .filter-panel {
+        max-width: 100%;
+        margin: 10px;
+      }
+
+      .card {
+        width: 100%;
+      }
+    }
+    /* Estilos para el panel de filtrado */
+.filter-panel {
+  display: none;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px;
+  max-width: 100%; /* Ocupar todo el ancho disponible */
+}
+
+.filter-panel.show {
+  display: block;
+}
+
+.filter-content h3 {
+  margin-bottom: 20px;
+  color: #006600;
+  font-size: 20px;
+}
+
+/* Diseño horizontal para escritorio */
+.filter-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Columnas flexibles */
+  gap: 15px; /* Espacio entre los filtros */
+}
+
+.filter-group {
+  margin-bottom: 0; /* Eliminar margen inferior */
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+.filter-group input,
+.filter-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.filter-actions {
+  grid-column: 1 / -1; /* Ocupar todas las columnas */
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.filter-actions button {
+  background-color: #006600;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  flex: 1;
+}
+
+.filter-actions button:hover {
+  background-color: #004d00;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .filter-content {
+    grid-template-columns: 1fr; /* Una columna en móviles */
+  }
+
+  .filter-group {
+    margin-bottom: 15px; /* Restaurar margen inferior en móviles */
+  }
+}
+  </style>
+</head>
+<body>
+  <!-- Encabezado -->
+  <div class="header">
+    <img src="https://i.ibb.co/mCzJTHyn/Service-Plus-Icon.png" alt="Logo Service Plus">
+    <span>Tablero de Control - Service Plus</span>
+  </div>
+
+  <!-- Botón de filtros -->
+  <button id="filter-toggle" class="filter-toggle">
+    <i class="fas fa-filter"></i> Filtros
+  </button>
+
+<!-- Panel de filtrado -->
+<div id="filter-panel" class="filter-panel">
+  <div class="filter-content">
+    <h3>Filtrar por:</h3>
+
+    <!-- Filtro de Fechas -->
+    <div class="filter-group">
+      <label for="start-date">Desde:</label>
+      <input type="date" id="start-date">
+    </div>
+    <div class="filter-group">
+      <label for="end-date">Hasta:</label>
+      <input type="date" id="end-date">
+    </div>
+
+    <!-- Filtro de Verticales -->
+    <div class="filter-group">
+      <label for="vertical">Verticales:</label>
+      <select id="vertical">
+        <option value="">Todas</option>
+      </select>
+    </div>
+
+    <!-- Filtro de Responsables -->
+    <div class="filter-group">
+      <label for="assignee">Responsables:</label>
+      <select id="assignee">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <!-- Filtro de Sector PV -->
+    <div class="filter-group">
+      <label for="sector-pv">Sector PV:</label>
+      <select id="sector-pv">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <!-- Filtro de Prioridad -->
+    <div class="filter-group">
+      <label for="priority">Prioridad:</label>
+      <select id="priority">
+        <option value="">Todas</option>
+      </select>
+    </div>
+
+    <!-- Filtro de Distribuidor -->
+    <div class="filter-group">
+      <label for="distributor">Distribuidor:</label>
+      <select id="distributor">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <!-- Filtro de Cliente -->
+    <div class="filter-group">
+      <label for="client">Cliente:</label>
+      <select id="client">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <!-- Filtro de Estado del Ticket -->
+    <div class="filter-group">
+      <label for="status">Estado del Ticket:</label>
+      <select id="status">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="filter-actions">
+      <button onclick="applyFilters()">Aplicar Filtros</button>
+      <button onclick="resetFilters()">Reiniciar Filtros</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Contenedor de KPIs -->
+  <div class="container" id="kpis-container">
+    <div class="loading">
+      <i class="fas fa-spinner fa-spin"></i> Cargando datos...
+    </div>
+  </div>
+
+  <script>
+    // Mostrar/ocultar el panel de filtrado
+    document.getElementById("filter-toggle").addEventListener("click", function () {
+      const panel = document.getElementById("filter-panel");
+      panel.classList.toggle("show");
+    });
+
+    // Aplicar filtros
+    function applyFilters() {
+      const startDate = document.getElementById("start-date").value;
+      const endDate = document.getElementById("end-date").value;
+      const vertical = document.getElementById("vertical").value;
+      const assignee = document.getElementById("assignee").value;
+      const sectorPV = document.getElementById("sector-pv").value;
+      const priority = document.getElementById("priority").value;
+      const distributor = document.getElementById("distributor").value;
+      const client = document.getElementById("client").value;
+      const status = document.getElementById("status").value;
+
+      loadKPIs(startDate, endDate, vertical, assignee, sectorPV, priority, distributor, client, status);
+    }
+
+    // Reiniciar filtros
+    function resetFilters() {
+      document.getElementById("start-date").value = "";
+      document.getElementById("end-date").value = "";
+      document.getElementById("vertical").value = "";
+      document.getElementById("assignee").value = "";
+      document.getElementById("sector-pv").value = "";
+      document.getElementById("priority").value = "";
+      document.getElementById("distributor").value = "";
+      document.getElementById("client").value = "";
+      document.getElementById("status").value = "";
+
+      loadKPIs();
+    }
+
+    // Función para llenar los selectores con opciones únicas
+    function loadFilterOptions() {
+      const columns = [
+        { id: "vertical", name: "vertical asociada" }, // Corregido: singular
+        { id: "assignee", name: "assignee" },
+        { id: "sector-pv", name: "sector pv involucrado" },
+        { id: "priority", name: "priority" },
+        { id: "distributor", name: "distribuidor asociado" },
+        { id: "client", name: "cliente asociado" },
+        { id: "status", name: "status" }
+      ];
+
+      columns.forEach(column => {
+        google.script.run
+          .withSuccessHandler(options => {
+            const select = document.getElementById(column.id);
+            select.innerHTML = `<option value="">Todos</option>` + options.map(option => `<option value="${option}">${option}</option>`).join("");
+          })
+          .withFailureHandler(error => {
+            console.error(`Error al cargar opciones para ${column.name}:`, error);
+          })
+          .getUniqueOptions(column.name);
+      });
+    }
+
+    // Función para cargar los KPIs
+    function loadKPIs(startDate = null, endDate = null, vertical = null, assignee = null, sectorPV = null, priority = null, distributor = null, client = null, status = null) {
+      document.getElementById("kpis-container").innerHTML = `
+        <div class="loading">
+          <i class="fas fa-spinner fa-spin"></i> Cargando datos...
+        </div>
+      `;
+
+      google.script.run
+        .withSuccessHandler(displayKPIs)
+        .withFailureHandler(displayError)
+        .getDataFromCSV(startDate, endDate, vertical, assignee, sectorPV, priority, distributor, client, status);
+    }
+
+    // Función para mostrar los KPIs
+    function displayKPIs(kpis) {
+      if (!kpis) {
+        displayError({ message: "No se encontraron datos para el rango de fechas seleccionado." });
+        return;
+      }
+
+      const formatNumber = (value) => {
+        return typeof value === "number" ? value.toFixed(2) : "N/A";
+      };
+
+      const container = document.getElementById("kpis-container");
+      container.innerHTML = `
+        <div class="card">
+          <i class="fas fa-check-circle" style="color: #006600; font-size: 24px;"></i>
+          <h3>Tasa de Resolución</h3>
+          <p>${formatNumber(kpis.tasaResolucion)}%</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-tools" style="color: #006600; font-size: 24px;"></i>
+          <h3>Tasa de Éxito en Reparaciones</h3>
+          <p>${formatNumber(kpis.tasaExitoReparaciones)}%</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-dollar-sign" style="color: #006600; font-size: 24px;"></i>
+          <h3>Ingresos Totales</h3>
+          <p>$${formatNumber(kpis.ingresosGenerados)}</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-ticket-alt" style="color: #006600; font-size: 24px;"></i>
+          <h3>Tickets Totales</h3>
+          <p>${kpis.ticketsTotales}</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-users" style="color: #006600; font-size: 24px;"></i>
+          <h3>Clientes Únicos</h3>
+          <p>${kpis.clientesUnicos}</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-clock" style="color: #006600; font-size: 24px;"></i>
+          <h3>Tiempo de Respuesta Inicial</h3>
+          <p>${formatNumber(kpis.tiempoRespuestaInicialPromedio)} horas</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-check-circle" style="color: #006600; font-size: 24px;"></i>
+          <h3>Tiempo de Validación de Garantía</h3>
+          <p>${formatNumber(kpis.tiempoValidacionGarantiaPromedio)} horas</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-wrench" style="color: #006600; font-size: 24px;"></i>
+          <h3>Tiempo Total de Resolución</h3>
+          <p>${formatNumber(kpis.tiempoResolucionPromedio)} horas</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-percentage" style="color: #006600; font-size: 24px;"></i>
+          <h3>Reparaciones Cubiertas</h3>
+          <p>${formatNumber(kpis.porcentajeReparacionesCubiertas)}%</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-dollar-sign" style="color: #006600; font-size: 24px;"></i>
+          <h3>Costo Total de Garantías</h3>
+          <p>$${formatNumber(kpis.costosGarantiaTotal)}</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-smile" style="color: #006600; font-size: 24px;"></i>
+          <h3>Satisfacción del Cliente</h3>
+          <p>${formatNumber(kpis.satisfaccionPromedio)}/5</p>
+        </div>
+      `;
+    }
+
+    // Función para mostrar errores
+    function displayError(error) {
+      document.getElementById("kpis-container").innerHTML = `
+        <div class="error-message">
+          <h3><i class="fas fa-exclamation-triangle"></i> Error al cargar los datos</h3>
+          <p>${error ? error.message : "Verifica la configuración del archivo CSV o intenta nuevamente más tarde."}</p>
+        </div>
+      `;
+    }
+
+    // Cargar los KPIs y las opciones de filtrado al iniciar la página
+    document.addEventListener("DOMContentLoaded", function () {
+      loadKPIs();
+      loadFilterOptions();
+    });
+  </script>
+</body>
+</html>
